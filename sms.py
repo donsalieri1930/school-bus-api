@@ -73,7 +73,10 @@ async def process_sms(body: NewSMSRequestBody, session: AsyncSession) -> None:
                                     body.sms_text,
                                     row.childId,
                                     row.lineId)
-    await send_sms_async(body.sms_from, create_confirmation_message(family_matched, dates))
+
+    confirmation_message = create_confirmation_message(family_matched, dates)
+    await send_sms_async(body.sms_from, confirmation_message)
+    sms_logger.info(f'{body.sms_from} - {repr(body.sms_text)} - {confirmation_message}')
 
 
 async def process_sms_wrapper(body: NewSMSRequestBody) -> None:
@@ -84,7 +87,8 @@ async def process_sms_wrapper(body: NewSMSRequestBody) -> None:
     async with AsyncSession(engine) as session:
         try:
             await process_sms(body, session)
-            sms_logger.info(f'{body.sms_from}:{repr(body.sms_text)}:OK')
         except SMSValidationError as e:
-            sms_logger.info(f'{body.sms_from}:{repr(body.sms_text)}:{e.__class__.__name__}({e.param})')
+            sms_logger.warning(f'{body.sms_from} - {repr(body.sms_text)} - {e.__class__.__name__} - {e.param}')
             await send_sms_async(body.sms_from, e.message)
+        except Exception as e:
+            sms_logger.error(f'{body.sms_from} - {repr(body.sms_text)} - {e.__class__.__name__}')
