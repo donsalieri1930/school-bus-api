@@ -1,0 +1,52 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  default:
+    format: "%(asctime)s:%(levelname)s:%(name)s:%(message)s"
+
+handlers:
+  uvicorn.access_file:
+    class: logging.FileHandler
+    filename: log/uvicorn.access.log
+    level: INFO
+    formatter: default
+
+  uvicorn.error_file:
+    class: logging.FileHandler
+    filename: log/uvicorn.error.log
+    level: INFO
+    formatter: default
+
+  uvicorn_file:
+    class: logging.FileHandler
+    filename: log/uvicorn.log
+    level: INFO
+    formatter: default
+
+  sms_file:
+    class: logging.FileHandler
+    filename: log/sms.log
+    level: INFO
+    formatter: default
+
+loggers:
+  uvicorn.access:
+    level: INFO
+    handlers: [uvicorn.access_file]
+    propagate: False
+
+  uvicorn.error:
+    level: INFO
+    handlers: [uvicorn.error_file]
+    propagate: False
+
+  uvicorn:
+    level: INFO
+    handlers: [uvicorn_file]
+    propagate: False
+
+  sms:
+    level: INFO
+    handlers: [sms_file]
+    propagate: False
