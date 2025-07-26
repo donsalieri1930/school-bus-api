@@ -4,6 +4,7 @@ from fastapi import FastAPI, Depends
 from fastapi import Request, BackgroundTasks, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.responses import PlainTextResponse
 
 from db import get_todays_sms, engine
 from models import NewSMSRequestBody
@@ -20,7 +21,7 @@ async def new_sms(request: Request, background_tasks: BackgroundTasks):
         raise HTTPException(status_code=403)
     body = await parse_request_body_utf8(request)
     background_tasks.add_task(process_sms_wrapper, body)
-    return "OK"
+    return PlainTextResponse("OK")
 
 
 @app.get("/admin")
