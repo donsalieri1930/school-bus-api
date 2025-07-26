@@ -87,7 +87,5 @@ async def parse_request_body_utf8(request: Request) -> NewSMSRequestBody:
     :param request: FastAPI Request object
     :return: NewSMSRequestBody object containing parsed data
     """
-    body_bytes = await request.body()
-    body_dict = parse_qs(body_bytes.decode('utf8')) # Parse query string into Dict[str, List[str]]
-    flat_body_dict = {k: v[0] for k, v in body_dict.items()} # There is only one value per key
-    return NewSMSRequestBody(**flat_body_dict)
+    form = await request.form()
+    return NewSMSRequestBody(**form)
