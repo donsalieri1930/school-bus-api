@@ -3,13 +3,14 @@ import re
 import secrets
 from datetime import date
 from typing import Set, Annotated, List, Tuple
+from urllib.parse import parse_qs
 
 from fastapi import Request, Depends, status, HTTPException
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from unidecode import unidecode
 
 from config import ADMIN_USERNAME, ADMIN_PASSWORD, CONFIRMATION_FORMAT
-from models import FamilyRow
+from models import FamilyRow, NewSMSRequestBody
 
 
 def get_client_ip(request: Request) -> str:
@@ -80,3 +81,13 @@ def create_confirmation_message(family_matched: List[FamilyRow], dates: List[Tup
     return CONFIRMATION_FORMAT.format(', '.join(children_full_names), dates_str)
 
 
+async def parse_request_body_utf8(request: Request) -> NewSMSRequestBody:
+    """
+    Parse the request body as UTF-8 encoded text.
+    :param request: FastAPI Request object
+    :return: NewSMSRequestBody object containing parsed data
+    """
+    body_bytes = await request.body()
+    body_dict = parse_qs(body_bytes.decode('utf8')) # Parse query string into Dict[str, List[str]]
+    flat_body_dict = {k: v[0] for k, v in body_dict.items()} # There is only one value per key
+    return NewSMSRequestBody(**flat_body_dict)
