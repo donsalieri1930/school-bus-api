@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 from pydantic import BaseModel
 
@@ -12,7 +12,7 @@ class NewSMSRequestBody(BaseModel):
     sms_text: str
     sms_date: str
     username: str
-    MsgId: str
+    MsgId: Optional[str] = None
 
 
 class FamilyRow(NamedTuple):
