@@ -85,9 +85,9 @@ def validate_range(start: Tuple[str, date], end: Tuple[str, date]) -> None:
     :param end: (matched_string, datetime.date) tuple
     :raises: errors.SMSValidationError
     """
-    if end[1] < start[1]: raise DateRangeOrderError(start[0] + ' : ' + end[0])
+    if end[1] < start[1]: raise DateRangeOrderError(start[0] + ' - ' + end[0])
     if (end[1] - start[1]).days > MAX_RANGE:
-        raise DateRangeTooLongError(start[0] + ' : ' + end[0])
+        raise DateRangeTooLongError(start[0] + ' - ' + end[0])
 
 
 def validate_time(new_date: Tuple[str, date]) -> None:

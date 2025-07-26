@@ -75,7 +75,7 @@ def create_confirmation_message(family_matched: List[FamilyRow], dates: List[Tup
     if len(dates) == 1:
         dates_str = dates[0][1].strftime('%d.%m.%Y')
     else:
-        dates_str = dates[0][1].strftime('%d.%m.%Y') + ' : ' + dates[1][1].strftime('%d.%m.%Y')
+        dates_str = dates[0][1].strftime('%d.%m.%Y') + ' - ' + dates[1][1].strftime('%d.%m.%Y')
 
     return CONFIRMATION_FORMAT.format(', '.join(children_full_names), dates_str)
 
