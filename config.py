@@ -10,6 +10,7 @@ FUTURE_LIMIT = 30
 WHITELIST_REQUESTS = True
 BEFORE_13_00 = True
 CONFIRMATION_FORMAT = "Zgłoszenie dla {} na {} zostało przyjęte."
+ERROR_MESSAGE = "Zgłoszenie nie zostało przyjęte z powodu awarii systemu. Prosimy o kontakt z administracją."
 
 # Secrets
 DATABASE = os.getenv("DATABASE")

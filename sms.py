@@ -88,7 +88,9 @@ async def process_sms_wrapper(body: NewSMSRequestBody) -> None:
         try:
             await process_sms(body, session)
         except SMSValidationError as e:
-            sms_logger.warning(f'{body.sms_from} - {repr(body.sms_text)} - {e.__class__.__name__} - {e.param}')
             await send_sms_async(body.sms_from, e.message)
+            sms_logger.warning(f'{body.sms_from} - {repr(body.sms_text)} - {e.__class__.__name__} - {e.param}')
         except Exception as e:
+            await send_sms_async(body.sms_from, ERROR_MESSAGE)
             sms_logger.error(f'{body.sms_from} - {repr(body.sms_text)} - {e.__class__.__name__}')
+            raise
