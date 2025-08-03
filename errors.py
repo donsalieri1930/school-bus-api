@@ -1,4 +1,5 @@
 from config import FUTURE_LIMIT, MAX_RANGE
+from datetime import datetime
 
 
 class SMSValidationError(Exception):
@@ -30,7 +31,7 @@ class TooManyDatesError(SMSValidationError):
 
 
 class DateInPastError(SMSValidationError):
-    message_template = "Data {} jest w przeszłosci."
+    message_template = "Data {} jest w przeszłosci. Dzisiaj jest " + datetime.now().strftime('%d.%m.%Y') + "."
 
 
 class DateTooFarInFutureError(SMSValidationError):
