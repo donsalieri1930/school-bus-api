@@ -32,6 +32,6 @@ async def admin(request: Request, _: Annotated[str, Depends(get_current_username
             "rows": await get_todays_sms(session)})
 
 
-@app.get("/status")
+@app.head("/status")
 async def status():
     return "OK"
