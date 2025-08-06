@@ -46,3 +46,4 @@ class SMSRow(NamedTuple):
     lineID: int
     childFullName: str
     lineCode: str
+    childClassName: str
