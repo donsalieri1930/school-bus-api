@@ -11,12 +11,16 @@ WHITELIST_REQUESTS = True
 BEFORE_13_00 = True
 CONFIRMATION_FORMAT = "Zgłoszenie dla {} na {} zostało przyjęte."
 ERROR_MESSAGE = "Zgłoszenie nie zostało przyjęte z powodu awarii systemu."
+EMAIL = "bus-no-reply@wegielek.edu.pl"
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
 
 # Secrets
 DATABASE = os.getenv("DATABASE")
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 SMSAPI = os.getenv("SMSAPI")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # Add any new critical env variables
-assert all([DATABASE, ADMIN_USERNAME, ADMIN_PASSWORD, SMSAPI, ...])
+assert all([DATABASE, ADMIN_USERNAME, ADMIN_PASSWORD, SMSAPI, EMAIL_PASSWORD, ...])

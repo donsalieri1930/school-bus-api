@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlmodel import text
 
 from config import DATABASE
-from models import FamilyRow, SMSRow
+from models import FamilyRow, SMSRow, EmailsRow
 
-engine = create_async_engine(DATABASE, echo=False)
+engine = create_async_engine(DATABASE, echo=False, pool_pre_ping=True)
 
 
 async def get_family_data(tel: str, session: AsyncSession) -> List[FamilyRow]:
@@ -68,3 +68,14 @@ async def get_todays_sms(session: AsyncSession) -> List[SMSRow]:
     sql = Path('sql/today.sql').read_text().strip()
     result = await session.execute(text(sql))
     return [SMSRow(*row) for row in result.fetchall()]
+
+
+async def get_emails(session: AsyncSession) -> List[EmailsRow]:
+    """
+    Fetch the list of emails for each line.
+    :param session: SQLAlchemy asynchronous session object
+    :return: List of EmailsRow objects
+    """
+    sql = Path('sql/emails.sql').read_text().strip()
+    result = await session.execute(text(sql))
+    return [EmailsRow(*row) for row in result.fetchall()]

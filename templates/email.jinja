@@ -1,0 +1,34 @@
+<html lang="pl">
+<head>
+<style>
+table{
+    display: table-row;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+</head>
+{% if messages %}
+    <table>
+    <tr>
+        <th>Dziecko</th>
+        <th>Treść</th>
+    </tr>
+    {% for msg in messages %}
+    <tr>
+        <td><a href="tel:{{ msg.tel }}">{{ msg.childFullName }} {{ msg.childClassName }}</a></td>
+        <td>{{ msg.text }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    {% else %}
+    <b>Brak wiadomości na dzisiaj.</b><br>
+    {% endif %}
+<div style="margin-top:30px"></div>
+<a href="https://wegielkobus.wegielek.edu.pl/admin"><b>Link do systemu awaryjnego</b></a><br>
+<b>Login:</b> <i>{{ login }}</i><br>
+<b>Hasło:</b> <i>{{ password }}</i><br>
+
+</html>

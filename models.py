@@ -47,3 +47,8 @@ class SMSRow(NamedTuple):
     childFullName: str
     lineCode: str
     childClassName: str
+
+
+class EmailsRow(NamedTuple):
+    lineCode: str
+    emails: str

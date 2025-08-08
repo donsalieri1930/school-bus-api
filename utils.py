@@ -2,8 +2,8 @@ import json
 import re
 import secrets
 from datetime import date
-from typing import Set, Annotated, List, Tuple
-from urllib.parse import parse_qs
+from typing import Set, Annotated, List, Tuple, Iterable, Callable
+from collections import defaultdict
 
 from fastapi import Request, Depends, status, HTTPException
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
@@ -89,3 +89,16 @@ async def parse_request_body_utf8(request: Request) -> NewSMSRequestBody:
     """
     form = await request.form()
     return NewSMSRequestBody(**form)
+
+
+def group_list_by_key(items: Iterable, key_func: Callable) -> defaultdict:
+    """
+    Group a list of items by a key.
+    :param items: List of items to group
+    :param key_func: Function to extract the key from each item
+    :return: Dictionary where keys are the result of key_func and values are lists of items
+    """
+    grouped = defaultdict(list)
+    for item in items:
+        grouped[key_func(item)].append(item)
+    return grouped
