@@ -23,7 +23,7 @@ class NoDateFoundError(SMSValidationError):
 
 
 class InvalidDateError(SMSValidationError):
-    message_template = "Znaleziona data {} jest nieprawidłowa."
+    message_template = "Znaleziona data {} jest nieprawidłowa (nie ma takiego dnia)."
 
 
 class TooManyDatesError(SMSValidationError):
