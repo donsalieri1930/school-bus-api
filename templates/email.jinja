@@ -1,9 +1,6 @@
 <html lang="pl">
 <head>
 <style>
-table{
-    display: table-row;
-}
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
@@ -18,7 +15,7 @@ table, th, td {
     </tr>
     {% for msg in messages %}
     <tr>
-        <td><a href="tel:{{ msg.tel }}">{{ msg.childFullName }} {{ msg.childClassName }}</a></td>
+        <td><a href="tel:{{ msg.tel }}">{{ msg.childClassName }} {{ msg.childFullName }}</a></td>
         <td>{{ msg.text }}</td>
     </tr>
     {% endfor %}
@@ -26,9 +23,4 @@ table, th, td {
     {% else %}
     <b>Brak wiadomości na dzisiaj.</b><br>
     {% endif %}
-<div style="margin-top:30px"></div>
-<a href="https://wegielkobus.wegielek.edu.pl/admin"><b>Link do systemu awaryjnego</b></a><br>
-<b>Login:</b> <i>{{ login }}</i><br>
-<b>Hasło:</b> <i>{{ password }}</i><br>
-
 </html>

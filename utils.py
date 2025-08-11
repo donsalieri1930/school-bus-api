@@ -1,9 +1,10 @@
 import json
 import re
 import secrets
-from datetime import date
+from datetime import date, datetime
 from typing import Set, Annotated, List, Tuple, Iterable, Callable
 from collections import defaultdict
+from zoneinfo import ZoneInfo
 
 from fastapi import Request, Depends, status, HTTPException
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
@@ -102,3 +103,10 @@ def group_list_by_key(items: Iterable, key_func: Callable) -> defaultdict:
     for item in items:
         grouped[key_func(item)].append(item)
     return grouped
+
+
+def current_local_time_string():
+    """
+    Return the current Warsaw time in 'HH:MM' format.
+    """
+    return datetime.now(ZoneInfo("Europe/Warsaw")).strftime("%H:%M")
