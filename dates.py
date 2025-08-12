@@ -8,6 +8,14 @@ from config import *
 from errors import *
 
 
+def tz_aware_now() -> datetime:
+    """
+    Return current time in Warsaw timezone.
+    :return: datetime object with timezone info
+    """
+    return datetime.now(timezone("Europe/Warsaw"))
+
+
 def construct_date(text: str, dmy: bool) -> date:
     """
     Parse date in an allowed format into a date object.
@@ -44,6 +52,7 @@ def find_all_dates(text: str) -> List[Tuple[str, date]]:
     named_regex = f"{dmy_regex}|{ymd_regex}|{today_regex}|{tomorrow_regex}"
 
     results = []
+    tz_aware_today = tz_aware_now().date()
 
     for match in re.finditer(named_regex, text, re.IGNORECASE):
         matched_str = match.group(0)
@@ -54,9 +63,9 @@ def find_all_dates(text: str) -> List[Tuple[str, date]]:
         elif ymd:
             results.append((matched_str, construct_date(ymd, dmy=False)))
         elif today:
-            results.append((matched_str, date.today()))
+            results.append((matched_str, tz_aware_today))
         elif tomorrow:
-            results.append((matched_str, date.today() + timedelta(days=1)))
+            results.append((matched_str, tz_aware_today + timedelta(days=1)))
 
     return results
 
@@ -69,7 +78,7 @@ def validate_date(new_date: Tuple[str, date]) -> None:
     :param new_date: (matched_string, datetime.date) tuple
     :raises: errors.SMSValidationError
     """
-    today = datetime.now(timezone("Europe/Warsaw")).date()
+    today = tz_aware_now().date()
     if new_date[1] < today: raise DateInPastError(new_date[0])
     if new_date[1] > today + timedelta(days=FUTURE_LIMIT):
         raise DateTooFarInFutureError(new_date[0])
@@ -79,7 +88,7 @@ def validate_range(start: Tuple[str, date], end: Tuple[str, date]) -> None:
     """
     Validate a pair of dates, make sure that
         * start <= end
-        * end - start <= config.FUTURE_LIMIT
+        * end - start <= config.MAX_RANGE
     make sure to call validate_date on start and end before.
     :param start: (matched_string, datetime.date) tuple
     :param end: (matched_string, datetime.date) tuple
@@ -98,7 +107,7 @@ def validate_time(new_date: Tuple[str, date], force=False) -> None:
     :param force: Force validation regardless of BEFORE_13_00
     :raises: errors.SentTooLateError
     """
-    now = datetime.now(timezone("Europe/Warsaw"))
+    now = tz_aware_now()
     validate = BEFORE_13_00 or force
     if new_date[1] == now.date() and now.time() > time(hour=13) and validate:
         raise SentTooLateError()
@@ -115,28 +124,11 @@ def create_date_range(start: Tuple[str, date], end: Tuple[str, date]) -> List[da
     return [start[1] + timedelta(days=i) for i in range(delta + 1)]
 
 
-def replace_literals(text: str) -> str:
-    """
-    Replace
-        * "dzis", "dzisiaj" with today's date
-        * "jutro" with tomorrow's date
-    in DD.MM.YYYY format.
-    """
-    now = datetime.now(timezone("Europe/Warsaw"))
-    today = now.date().isoformat()
-    tomorrow = (now + timedelta(days=1)).date().strftime("%d.%m.%Y")
-    for k, v in {'dzisiaj': today,
-                 'dzis': today,
-                 'jutro': tomorrow}.items():
-        text = text.replace(k, v)
-    return text
-
-
 def is_late(days: List[date]) -> bool:
     """
     Check if validate_time would raise SentTooLateError for the first date in the list.
     :param days: List of datetime.date objects
-    :return: True if error would not be raised, False if it would
+    :return: True if error would be raised, False otherwise
     """
     try:
         validate_time(("", days[0]), force=True)
