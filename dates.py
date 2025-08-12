@@ -90,15 +90,17 @@ def validate_range(start: Tuple[str, date], end: Tuple[str, date]) -> None:
         raise DateRangeTooLongError(start[0] + ' - ' + end[0])
 
 
-def validate_time(new_date: Tuple[str, date]) -> None:
+def validate_time(new_date: Tuple[str, date], force=False) -> None:
     """
     Make sure that a message for today was received before 13:00 Warsaw time.
     Can be switched on/off by config.BEFORE_13_00.
     :param new_date: (matched_string, datetime.date) tuple
+    :param force: Force validation regardless of BEFORE_13_00
     :raises: errors.SentTooLateError
     """
     now = datetime.now(timezone("Europe/Warsaw"))
-    if new_date[1] == now.date() and now.time() > time(hour=13) and BEFORE_13_00:
+    validate = BEFORE_13_00 or force
+    if new_date[1] == now.date() and now.time() > time(hour=13) and validate:
         raise SentTooLateError()
 
 
@@ -128,3 +130,15 @@ def replace_literals(text: str) -> str:
                  'jutro': tomorrow}.items():
         text = text.replace(k, v)
     return text
+
+
+def is_late(days: List[date]) -> bool:
+    """
+    Check if validate_time would raise SentTooLateError for the first date in the list.
+    :param days: List of datetime.date objects
+    :return: True if error would not be raised, False if it would
+    """
+    try:
+        validate_time(("", days[0]), force=True)
+    except SentTooLateError: return True
+    return False

@@ -8,8 +8,10 @@ load_dotenv()
 MAX_RANGE = 30
 FUTURE_LIMIT = 30
 WHITELIST_REQUESTS = True
-BEFORE_13_00 = True
+BEFORE_13_00 = False
+BEFORE_13_00_WARNING = True
 CONFIRMATION_FORMAT = "Zgłoszenie dla {} na {} zostało przyjęte."
+BEFORE_13_00_WARNING_MESSAGE = "Zgłoszenie dotyczy dzisiejszego dnia, ale zostało wysłane po godzinie 13:00. Prosimy o kontakt."
 ERROR_MESSAGE = "Zgłoszenie nie zostało przyjęte z powodu awarii systemu. Prosimy o kontakt."
 EMAIL = "bus-no-reply@wegielek.edu.pl"
 SMTP_HOST = "smtp.gmail.com"

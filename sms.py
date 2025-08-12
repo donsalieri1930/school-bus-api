@@ -75,6 +75,9 @@ async def process_sms(body: NewSMSRequestBody, session: AsyncSession) -> None:
                                     row.lineId)
 
     confirmation_message = create_confirmation_message(family_matched, dates)
+    if BEFORE_13_00_WARNING and is_late(days):
+        confirmation_message += ' ' + BEFORE_13_00_WARNING_MESSAGE
+
     await send_sms_async(body.sms_from, confirmation_message)
     sms_logger.info(f'{body.sms_from} - {repr(body.sms_text)} - {confirmation_message}')
 
