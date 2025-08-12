@@ -1,33 +1,62 @@
+{% set COLORMAP = {
+    "A": "#009688",
+    "B": "",
+    "D": "#009688",
+    "S": ""
+} %}
+
+{% set COLORMAP2 = {
+    "W": "#D32F2F",
+    "K": "#1976D2",
+    "P": "#C2185B",
+    "L": "#FBC02D"
+} %}
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0 }
+        table { border-collapse: collapse; min-width: max-content; }
+        th, td { white-space: nowrap; padding: 6px 12px; text-align: left; }
+        thead th { border-bottom: 2px solid #ccc; }
+        tbody tr:nth-child(even) { background-color: rgba(0,0,0,0.04); }
+        tbody tr:hover { background-color: rgba(0,0,0,0.08); }
+        th:last-child, td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    </style>
 </head>
 <body>
-<table style="width: 100%; font-family: system-ui">
+<table>
     <thead>
-    <tr style="text-align: left">
-        <th>lineCode</th>
-        <th>tel</th>
-        <th>childFullName</th>
-        <th>childClassName</th>
-        <th>text</th>
-    </tr>
+        <tr>
+            <th>Linia</th>
+            <th>Klasa</th>
+            <th>Imię</th>
+            <th>Treść</th>
+            <th>Data</th>
+            <th>Numer</th>
+        </tr>
     </thead>
     <tbody>
     {% for row in rows %}
         <tr>
-            <td>{{ row.lineCode }}</td>
-            <td>{{ row.tel }}</td>
+            <td style="background-color: {{ COLORMAP[row.lineCode] }}; font-weight: bold; color: {% if COLORMAP[row.lineCode] %}#fff{% else %}inherit{% endif %};">
+                {{ row.lineCode }}
+            </td>
+            <td style="color: {{ COLORMAP2[row.childClassName[0]] }}; font-weight: bold;">
+                {{ row.childClassName }}
+            </td>
             <td>{{ row.childFullName }}</td>
-            <td>{{ row.childClassName }}</td>
             <td>{{ row.text }}</td>
+            <td>{{ row.dateReceived }}</td>
+            <td>{{ row.tel }}</td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
-
 </body>
 </html>
