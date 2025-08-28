@@ -1,3 +1,5 @@
+from pytz import timezone
+
 from config import FUTURE_LIMIT, MAX_RANGE
 from datetime import datetime
 
@@ -31,7 +33,11 @@ class TooManyDatesError(SMSValidationError):
 
 
 class DateInPastError(SMSValidationError):
-    message_template = "Data {} jest w przeszłosci. Dzisiaj jest " + datetime.now().strftime('%d.%m.%Y') + "."
+    # override constructor to calculate current date when raised
+    def __init__(self, param: str):
+        today = datetime.now(timezone("Europe/Warsaw")).strftime('%d.%m.%Y')
+        self.message_template = "Data {} jest w przeszłości. Dzisiaj jest " + today + "."
+        super().__init__(param)
 
 
 class DateTooFarInFutureError(SMSValidationError):
@@ -55,4 +61,4 @@ class NoChildrenRegisteredError(SMSValidationError):
 
 
 class NoChildrenNameError(SMSValidationError):
-    message_template = "Wiadomość nie zawiera imienia dziecka zapisanego do Węgielkobusa: {}. "
+    message_template = "Wiadomość nie zawiera imienia dziecka zapisanego do Węgielkobusa: {}."
