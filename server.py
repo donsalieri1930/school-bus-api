@@ -6,6 +6,7 @@ from fastapi import Request, BackgroundTasks, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import PlainTextResponse
+from starlette.responses import RedirectResponse
 
 from db import get_todays_sms, engine
 from models import NewSMSRequestBody
@@ -38,3 +39,8 @@ async def admin(request: Request, _: Annotated[str, Depends(get_current_username
 @app.head("/status")
 async def status():
     return "OK"
+
+
+@app.get('/')
+def home():
+    return RedirectResponse('/admin')
