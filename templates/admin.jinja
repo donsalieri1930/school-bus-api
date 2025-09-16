@@ -23,7 +23,7 @@
         body { font-family: system-ui, sans-serif; margin: 0 }
         table { border-collapse: collapse; min-width: max-content; }
         th, td { white-space: nowrap; padding: 6px 12px; text-align: left; }
-        thead th { border-bottom: 2px solid #ccc; }
+        thead th { border-bottom: 2px solid #ccc; text-transform: uppercase; }
         tbody tr:nth-child(even) { background-color: rgba(0,0,0,0.04); }
         tbody tr:hover { background-color: rgba(0,0,0,0.08); }
         th:last-child, td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
@@ -51,9 +51,9 @@
                 {{ row.childClassName }}
             </td>
             <td>{{ row.childFullName }}</td>
-            <td>{{ row.text }}</td>
-            <td>{{ row.dateReceived }}</td>
-            <td>{{ row.tel }}</td>
+            <td style="max-width: 500px; white-space: normal">{{ row.text }}</td>
+            <td>{{ row.dateReceived.replace(tzinfo=zone_info('UTC')).astimezone(zone_info('Europe/Warsaw')).strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td><a href="tel:{{ row.tel }}">{{ row.tel }}</a></td>
         </tr>
     {% endfor %}
     </tbody>

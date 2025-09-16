@@ -1,4 +1,5 @@
 from typing import Annotated
+from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Depends
 from fastapi import Request, BackgroundTasks, HTTPException
@@ -29,7 +30,9 @@ async def admin(request: Request, _: Annotated[str, Depends(get_current_username
     async with AsyncSession(engine) as session:
         return templates.TemplateResponse("admin.jinja", {
             'request': request,
-            "rows": await get_todays_sms(session)})
+            "rows": await get_todays_sms(session),
+            'zone_info': ZoneInfo
+        })
 
 
 @app.head("/status")
