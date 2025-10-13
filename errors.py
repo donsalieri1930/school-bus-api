@@ -53,7 +53,8 @@ class DateRangeTooLongError(SMSValidationError):
 
 
 class SentTooLateError(SMSValidationError):
-    message_template = "Zgłoszenie dotyczy dzisiejszego dnia, ale zostało wysłane po godzinie 13:00."
+    message_template = ("Zgłoszenie dotyczy dzisiejszego dnia, ale zostało wysłane po godzinie 13:00. "
+                        "Prosimy o kontakt na numer: 572 547 001.")
 
 
 class NoChildrenRegisteredError(SMSValidationError):
