@@ -8,10 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import PlainTextResponse
 from starlette.responses import RedirectResponse
 
-from db import get_todays_sms, engine
+from db import get_todays_sms, engine, get_emails
 from models import NewSMSRequestBody
 from sms import process_sms_wrapper
-from utils import get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8
+from utils import get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -34,6 +34,23 @@ async def admin(request: Request, _: Annotated[str, Depends(get_current_username
             "rows": await get_todays_sms(session),
             'zone_info': ZoneInfo
         })
+
+
+@app.get("/admin2")
+async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current_username)]):
+    async with AsyncSession(engine) as session:
+        sms_rows = await get_todays_sms(session)
+        grouped_rows = group_list_by_key(sms_rows, lambda r: r.lineCode)
+
+        email_rows = await get_emails(session)
+        grouped_emails = group_list_by_key(email_rows, lambda e: e.lineCode)
+        return templates.TemplateResponse("admin2.jinja", {
+            "request": request,
+            "grouped_rows": grouped_rows,
+            "grouped_emails": grouped_emails,
+            "zone_info": ZoneInfo,
+        })
+
 
 
 @app.head("/status")
