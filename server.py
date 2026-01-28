@@ -29,16 +29,6 @@ async def new_sms(request: Request, background_tasks: BackgroundTasks):
 
 
 @app.get("/admin")
-async def admin(request: Request, _: Annotated[str, Depends(get_current_username)]):
-    async with AsyncSession(engine) as session:
-        return templates.TemplateResponse("admin.jinja", {
-            'request': request,
-            "rows": await get_todays_sms(session),
-            'zone_info': ZoneInfo
-        })
-
-
-@app.get("/admin2")
 async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current_username)]):
     async with AsyncSession(engine) as session:
         sms_rows = await get_todays_sms(session)
@@ -52,7 +42,6 @@ async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current
             "grouped_emails": grouped_emails,
             "zone_info": ZoneInfo,
         })
-
 
 
 @app.head("/status")
