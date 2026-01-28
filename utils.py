@@ -110,3 +110,12 @@ def current_local_time_string():
     Return the current Warsaw time in 'HH:MM' format.
     """
     return datetime.now(ZoneInfo("Europe/Warsaw")).strftime("%H:%M")
+
+
+def parse_list(items: str) -> list[str]:
+    """
+    Parse a string with items separated by semicolons into a list.
+    Whitespaces are trimmed, and the returned list is sorted. Empty
+    items are ignored.
+    """
+    return sorted([item.strip() for item in items.split(";") if item.strip()])

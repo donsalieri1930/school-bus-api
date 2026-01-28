@@ -79,17 +79,15 @@
             Linia {{ line_code }}
             <ul>
             {% for e in email_rows %}
-                {% for addr in e.emails.split(';') %}
-                    {% set addr = addr.strip() %}
-                    {% if addr %}
+                {% for addr in e.emails | parse_list  %}
                         <li>{{ addr }}</li>
-                    {% endif %}
                 {% endfor %}
             {% endfor %}
             </ul>
         </li>
     {% endfor %}
     </ol>
+    
 </details>
 
 </body>

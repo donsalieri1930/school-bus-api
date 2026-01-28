@@ -11,10 +11,12 @@ from starlette.responses import RedirectResponse
 from db import get_todays_sms, engine, get_emails
 from models import NewSMSRequestBody
 from sms import process_sms_wrapper
-from utils import get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key
+from utils import get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key, parse_list
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+templates.env.filters['parse_list'] = parse_list
 
 
 @app.post("/sms")
