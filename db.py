@@ -59,14 +59,15 @@ async def insert_sms_record(
     await session.commit()
 
 
-async def get_todays_sms(session: AsyncSession) -> List[SMSRow]:
+async def get_sms_for_date(target_date: date, session: AsyncSession) -> List[SMSRow]:
     """
-    Fetch all SMS records for today.
+    Fetch all SMS records for the selected target date.
+    :param target_date: Value of tblsmsbus.dataDocelowa to query
     :param session: SQLAlchemy asynchronous session object
-    :return: List of SMSSow objects containing today's SMS data.
+    :return: List of SMSRow objects containing messages for the given day.
     """
-    sql = Path('sql/today.sql').read_text().strip()
-    result = await session.execute(text(sql))
+    sql = Path('sql/by_date.sql').read_text().strip()
+    result = await session.execute(text(sql), {'targetDate': target_date})
     return [SMSRow(*row) for row in result.fetchall()]
 
 

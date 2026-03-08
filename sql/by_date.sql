@@ -8,5 +8,5 @@ FROM
 JOIN r_stoucznia AS C ON B.idDziecka = C.id
 JOIN r_stolinia AS L ON B.idLinii = L.id
 JOIN r_stoklasa AS K ON C.KlasaDU = K.id
-WHERE B.dataDocelowa = CURDATE()
+WHERE B.dataDocelowa = :targetDate
 ORDER BY L.kodLinii, Klasa, C.Nazwisko, C.Imie;

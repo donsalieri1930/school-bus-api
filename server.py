@@ -1,4 +1,5 @@
-from typing import Annotated
+from datetime import date
+from typing import Annotated, Optional
 from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Depends
@@ -8,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import PlainTextResponse
 from starlette.responses import RedirectResponse
 
-from db import get_todays_sms, engine, get_emails
+from db import get_sms_for_date, engine, get_emails
 from models import NewSMSRequestBody
 from sms import process_sms_wrapper
-from utils import get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key, parse_list
+from utils import current_local_date, get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key, parse_list
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -30,8 +31,9 @@ async def new_sms(request: Request, background_tasks: BackgroundTasks):
 
 @app.get("/admin")
 async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current_username)]):
+    selected_date = current_local_date()
     async with AsyncSession(engine) as session:
-        sms_rows = await get_todays_sms(session)
+        sms_rows = await get_sms_for_date(selected_date, session)
         grouped_rows = group_list_by_key(sms_rows, lambda r: r.lineCode)
 
         email_rows = await get_emails(session)
@@ -41,6 +43,24 @@ async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current
             "grouped_rows": grouped_rows,
             "grouped_emails": grouped_emails,
             "zone_info": ZoneInfo,
+        })
+
+
+@app.get("/admin/log")
+async def admin_log(
+        request: Request,
+        _: Annotated[str, Depends(get_current_username)],
+        date: Optional[date] = None,
+):
+    selected_date = date or current_local_date()
+    async with AsyncSession(engine) as session:
+        sms_rows = await get_sms_for_date(selected_date, session)
+        grouped_rows = group_list_by_key(sms_rows, lambda r: r.lineCode)
+        return templates.TemplateResponse("admin_log.jinja", {
+            "request": request,
+            "grouped_rows": grouped_rows,
+            "zone_info": ZoneInfo,
+            "selected_date": selected_date,
         })
 
 

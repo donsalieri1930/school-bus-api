@@ -112,6 +112,13 @@ def current_local_time_string():
     return datetime.now(ZoneInfo("Europe/Warsaw")).strftime("%H:%M")
 
 
+def current_local_date() -> date:
+    """
+    Return the current date in Warsaw timezone.
+    """
+    return datetime.now(ZoneInfo("Europe/Warsaw")).date()
+
+
 def parse_list(items: str) -> list[str]:
     """
     Parse a string with items separated by semicolons into a list.
