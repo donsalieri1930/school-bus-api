@@ -1,5 +1,4 @@
 from typing import Annotated
-from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Depends
 from fastapi import Request, BackgroundTasks, HTTPException
@@ -40,7 +39,6 @@ async def new_admin_beta(request: Request, _: Annotated[str, Depends(get_current
             "request": request,
             "grouped_rows": grouped_rows,
             "grouped_emails": grouped_emails,
-            "zone_info": ZoneInfo,
         })
 
 

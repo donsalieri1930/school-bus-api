@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from pathlib import Path
 from typing import List
+from zoneinfo import ZoneInfo
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlmodel import text
@@ -47,8 +48,8 @@ async def insert_sms_record(
     await session.execute(
         text(sql),
         {
-            "dateReceived": datetime.now(),
-            "dateReceivedAPI": datetime.fromtimestamp(int(date_received_api)),
+            "dateReceived": datetime.now(ZoneInfo("Europe/Warsaw")).replace(tzinfo=None),
+            "dateReceivedAPI": datetime.fromtimestamp(int(date_received_api), ZoneInfo("Europe/Warsaw")).replace(tzinfo=None),
             "tel": tel,
             "targetDate": target_date,
             "text": text_,
@@ -66,7 +67,7 @@ async def get_todays_sms(session: AsyncSession) -> List[SMSRow]:
     :return: List of SMSSow objects containing today's SMS data.
     """
     sql = Path('sql/today.sql').read_text().strip()
-    result = await session.execute(text(sql))
+    result = await session.execute(text(sql), {"today": datetime.now(ZoneInfo("Europe/Warsaw")).date()})
     return [SMSRow(*row) for row in result.fetchall()]
 
 
