@@ -12,6 +12,7 @@ from db import get_sms_for_date, engine, get_emails
 from models import NewSMSRequestBody
 from sms import process_sms_wrapper
 from utils import current_local_date, get_client_ip, get_whitelisted_ips, get_current_username, parse_request_body_utf8, group_list_by_key, parse_list
+from config import WHITELIST_REQUESTS
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -21,7 +22,7 @@ templates.env.filters['parse_list'] = parse_list
 
 @app.post("/sms")
 async def new_sms(request: Request, background_tasks: BackgroundTasks):
-    if get_client_ip(request) not in get_whitelisted_ips():
+    if WHITELIST_REQUESTS and get_client_ip(request) not in get_whitelisted_ips():
         raise HTTPException(status_code=403)
     body = await parse_request_body_utf8(request)
     background_tasks.add_task(process_sms_wrapper, body)

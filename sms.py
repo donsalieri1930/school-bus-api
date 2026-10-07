@@ -14,7 +14,7 @@ sms_logger = logging.getLogger('sms')
 
 
 async def send_sms_async(to: str, message: str) -> httpx.Response:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=10) as client:
         return await client.post(
             "https://api.smsapi.pl/sms.do",
             headers={"Authorization": f"Bearer {SMSAPI}"},
@@ -43,7 +43,7 @@ async def process_sms(body: NewSMSRequestBody, session: AsyncSession) -> None:
             validate_time(single)
             days = [single[1]]
         case [start, end]:
-            # Validate a range, start by validating start and end separately.
+            # Validate start, note that end may be beyond FUTURE_LIMIT.
             validate_date(start)
             validate_time(start)
             validate_range(start, end)
