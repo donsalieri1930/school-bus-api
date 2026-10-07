@@ -1,13 +1,12 @@
 import asyncio
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import engine, get_emails, get_todays_sms
-from utils import group_list_by_key, current_local_time_string
+from db import engine, get_emails, get_sms_for_date
+from utils import current_local_date, group_list_by_key, current_local_time_string
 from config import EMAIL, EMAIL_PASSWORD, SMTP_HOST, SMTP_PORT
 
 templates = Environment(loader=FileSystemLoader('templates'))
@@ -17,9 +16,10 @@ async def main() -> None:
     Send email report of today's SMS messages for each bus line.
     :return: None
     """
+    selected_date = current_local_date()
     async with AsyncSession(engine) as session:
         email_rows = await get_emails(session)
-        sms_rows = await get_todays_sms(session)
+        sms_rows = await get_sms_for_date(selected_date, session)
     await engine.dispose()
 
     grouped_sms_rows = group_list_by_key(sms_rows, lambda row: row.lineCode)
@@ -45,7 +45,7 @@ async def main() -> None:
 
             smtp.send_message(msg)
 
-            print(f'{msg['To']}: {msg["Subject"]}')
+            print(f"{msg['To']}: {msg['Subject']}")
 
 
 if __name__ == "__main__":
